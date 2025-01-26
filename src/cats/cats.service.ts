@@ -21,31 +21,40 @@ export class CatsService {
     });
 
     if (!breed) {
-      console.log('Breed not found');
+      console.log('🚩 Create process => Breed not found');
       throw new BadRequestException('Breed not found');
     }
 
-    console.log('New cat created', createCatDto);
+    console.log('🔵 Create process => New cat created', createCatDto);
     return await this.catRepository.save({ ...createCatDto, breed });
   }
 
   async findAll() {
-    console.log('All cats found');
+    console.log('🔰 search all process => All cats found');
     return await this.catRepository.find();
   }
 
   async findOne(id: number) {
-    console.log('Cat found', id);
+    console.log('🔰 search process => Cat found', id);
     return await this.catRepository.findOneBy({ id });
   }
 
   async update(id: number, updateCatDto: UpdateCatDto) {
-    console.log('Cat updated', id, updateCatDto);
-    return 'This action adds a new cat';
-    // return await this.catRepository.update(id, updateCatDto);
+    const breed = await this.breedRepository.findOneBy({
+      name: updateCatDto.breed,
+    });
+
+    if (!breed) {
+      console.log('🚩 Update process => Breed not found');
+      throw new BadRequestException('Breed not found');
+    }
+
+    console.log('🟣 Update process => Cat updated', id, updateCatDto);
+    return await this.catRepository.update(id, { ...updateCatDto, breed });
   }
 
   async remove(id: number) {
+    console.log('🔴 Delete process => Cat deleted', id);
     return await this.catRepository.softDelete(id); // se usa softDelete en lugar de delete para no borrar el registro
     // return await this.catRepository.softRemove(id) // se  le pasa la instancia del objeto a borrar
   }
